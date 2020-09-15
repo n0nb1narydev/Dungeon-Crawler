@@ -9,10 +9,17 @@ public class Player : MonoBehaviour
     private NavMeshAgent nma;
     private Animator anim;
     private bool isRunning = false;
+    private bool isFighting = false;
+    public int Experience = 0;
+    private Skeleton skeleton;
+    public int level = 1;
+    [SerializeField]
+    private int lives = 30;
     void Start()
     {
         nma = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+        skeleton = GameObject.Find("Skeleton").GetComponent<Skeleton>();
     }
 
     // Update is called once per frame
@@ -41,5 +48,9 @@ public class Player : MonoBehaviour
 
         anim.SetBool("isRunning", isRunning);
     }
-
+    public void DamagePlayer(int min, int max)
+    {   
+            int hitForRandom = Random.Range(min, max);
+            lives -= hitForRandom;
+    }
 }
