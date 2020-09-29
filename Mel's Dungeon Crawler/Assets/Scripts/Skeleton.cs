@@ -15,6 +15,7 @@ public class Skeleton : MonoBehaviour
     private float maxDist= 3.5f;
     [SerializeField]
     private float dist;
+    private IEnumerator level1Dmg;
     
     
     // Start is called before the first frame update
@@ -32,25 +33,40 @@ public class Skeleton : MonoBehaviour
         dist = Vector3.Distance(player.transform.position, transform.position);
         if(dist <= maxDist) //aggro range
         {
-            isWalking = true;
-            isFighting = false;
-            _nma.SetDestination(player.transform.position);
+            if(player.isDead == false)
+            {
+                isWalking = true;
+                isFighting = false;
+                _nma.SetDestination(player.transform.position);
+            }
         } 
         if(dist <= minDist) //combat range
         {
-            isWalking = false;
-            isFighting = true;
+            if(player.isDead == false)
+            {
+                isWalking = false;
+                isFighting = true;
+            }
         }
-        if(this.isFighting == true && this.tag == "level1")
+        if(player.isDead == true)
         {
-            StartCoroutine(HitPlayer());
+            isFighting = false;
+            isWalking = false;
         }
         animator.SetBool("isWalking", isWalking);
         animator.SetBool("isFighting", isFighting);
     }
-    IEnumerator HitPlayer()
+    /// <summary>
+    /// OnTriggerStay is called once per frame for every Collider other
+    /// that is touching the trigger.
+    /// </summary>
+    /// <param name="other">The other Collider involved in this collision.</param>
+    void OnTriggerStay(Collider other)
     {
-        yield return new WaitForSeconds(3f);
-        player.DamagePlayer(1, 5);
+        level1Dmg = player.DamagePlayer(0, 5);
+        if(this.isFighting == true && this.tag == "level1" && player.coroutineStartedFlag == false)
+        {
+            StartCoroutine(level1Dmg);
+        }
     }
 }
