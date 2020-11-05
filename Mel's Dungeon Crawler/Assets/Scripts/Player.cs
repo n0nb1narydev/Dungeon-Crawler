@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private Animator anim;
     private bool isRunning = false;
     private bool isFighting = false;
+    private bool isAttacking = false;
     public bool isDead = false;
     public int Experience = 0;
     private Skeleton skeleton;
@@ -35,6 +36,7 @@ public class Player : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hit;
+        Debug.Log(ray);
 
         if(Input.GetMouseButtonDown(0))
         {
@@ -44,19 +46,25 @@ public class Player : MonoBehaviour
             }
         }
 
+        // if(hit.point == )
+
         if(nma.remainingDistance <= nma.stoppingDistance)
         {
             isRunning = false;
+            isAttacking = true;
         } 
         else
         {
             isRunning = true;
+            isAttacking = false;
         }
 
         anim.SetBool("isRunning", isRunning);
         anim.SetBool("isIdle", isIdle);
         anim.SetBool("isDead", isDead);
+        anim.SetBool("isAttacking", isAttacking);
     }
+
     public IEnumerator DamagePlayer(int min, int max)
     {   
             coroutineStartedFlag = true;
@@ -74,12 +82,13 @@ public class Player : MonoBehaviour
             yield return new WaitForSeconds(1.5f);
             coroutineStartedFlag = false;
     }
+
     private IEnumerator PlayerDeath()
     {
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(4.5f);
         Respawn();
-
     }
+
     private void Respawn()
     {
         transform.position = startPos.transform.position;
